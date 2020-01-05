@@ -9,17 +9,17 @@ namespace soa {
 ///
 __global__
 void kernel(
-    float const * src_x,
-    float const * src_y,
-    float const * src_z,
-    float const * fld_x,
-    float const * fld_y,
-    float const * fld_z,
-    float * out,
-    size_t pitch,
-    float fac,
-    float eps_sqr,
-    float eps_sqr_2)
+        float const * src_x,
+        float const * src_y,
+        float const * src_z,
+        float const * fld_x,
+        float const * fld_y,
+        float const * fld_z,
+        float * out,
+        size_t pitch,
+        float fac,
+        float eps_sqr,
+        float eps_sqr_2)
 {
     auto i = blockIdx.y + threadIdx.y;
     auto j = blockIdx.x + threadIdx.x;
@@ -33,19 +33,19 @@ void kernel(
     auto fz = fld_z[j];
 
     detail::common(
-        3 * i,
-        3 * j,
-        sx,
-        sy,
-        sz,
-        fx,
-        fy,
-        fz,
-        out,
-        pitch,
-        fac,
-        eps_sqr,
-        eps_sqr_2);
+            3 * i,
+            3 * j,
+            sx,
+            sy,
+            sz,
+            fx,
+            fy,
+            fz,
+            out,
+            pitch,
+            fac,
+            eps_sqr,
+            eps_sqr_2);
 }
 
 } // namespace soa

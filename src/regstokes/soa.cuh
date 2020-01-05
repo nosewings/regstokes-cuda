@@ -13,17 +13,17 @@ template<unsigned tile_dim, unsigned block_h, unsigned warp_size = 32,
         bool specialize = true>
 __global__
 void kernel(
-    float const * src_x,
-    float const * src_y,
-    float const * src_z,
-    float const * fld_x,
-    float const * fld_y,
-    float const * fld_z,
-    float * out,
-    size_t pitch,
-    float fac,
-    float eps_sqr,
-    float eps_sqr_2)
+        float const * src_x,
+        float const * src_y,
+        float const * src_z,
+        float const * fld_x,
+        float const * fld_y,
+        float const * fld_z,
+        float * out,
+        size_t pitch,
+        float fac,
+        float eps_sqr,
+        float eps_sqr_2)
 {
     constexpr auto block_size = tile_dim * block_h;
 
@@ -48,12 +48,12 @@ void kernel(
     __shared__ float out_tile[3 * block_h][3 * tile_dim];
 
     regstokes::soa::detail::read<tile_dim, block_h, warp_size, specialize>::_(
-        fld_x,
-        fld_y,
-        fld_z,
-        fld_x_tile,
-        fld_y_tile,
-        fld_z_tile);
+            fld_x,
+            fld_y,
+            fld_z,
+            fld_x_tile,
+            fld_y_tile,
+            fld_z_tile);
 
     if constexpr (block_size > warp_size) {
         __syncthreads();
@@ -71,23 +71,23 @@ void kernel(
         auto fz = fld_z_tile[t * block_h + threadIdx.y];
         float xx, xy, xz, yy, yz, zz;
         regstokes::core(
-            sx,
-            sy,
-            sz,
-            fx,
-            fy,
-            fz,
-            out,
-            pitch,
-            fac,
-            eps_sqr,
-            eps_sqr_2,
-            xx,
-            xy,
-            xz,
-            yy,
-            yz,
-            zz);
+                sx,
+                sy,
+                sz,
+                fx,
+                fy,
+                fz,
+                out,
+                pitch,
+                fac,
+                eps_sqr,
+                eps_sqr_2,
+                xx,
+                xy,
+                xz,
+                yy,
+                yz,
+                zz);
         out_tile[0][3 * threadIdx.x + 0] = xx;
         out_tile[0][3 * threadIdx.x + 1] = xy;
         out_tile[0][3 * threadIdx.x + 2] = xz;

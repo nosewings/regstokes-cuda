@@ -7,15 +7,18 @@
 using namespace regstokes;
 
 void test_reference_soa(
-    dim3 blocks,
-    dim3 threads,
-    int n,
-    float fac,
-    float eps_sqr,
-    float eps_sqr_2,
-    int num_runs)
+        dim3 blocks,
+        dim3 threads,
+        int n,
+        float fac,
+        float eps_sqr,
+        float eps_sqr_2,
+        int num_runs)
 {
-    float *x, *y, *z, *out;
+    float * x;
+    float * y;
+    float * z;
+    float * out;
     cudaMalloc(&x, n * sizeof(float));
     REGSTOKES_CUDA_CHECK_LAST_ERROR();
     cudaMalloc(&y, n * sizeof(float));
@@ -30,17 +33,17 @@ void test_reference_soa(
 
     for (auto i = 0; i < num_runs; i++) {
         reference::soa::kernel<<<blocks, threads>>>(
-            x,
-            y,
-            z,
-            x,
-            y,
-            z,
-            out,
-            3 * n * sizeof(float),
-            fac,
-            eps_sqr,
-            eps_sqr_2);
+                x,
+                y,
+                z,
+                x,
+                y,
+                z,
+                out,
+                3 * n * sizeof(float),
+                fac,
+                eps_sqr,
+                eps_sqr_2);
         cudaDeviceSynchronize();
         REGSTOKES_CUDA_CHECK_LAST_ERROR();
     }
@@ -59,15 +62,16 @@ void test_reference_soa(
 }
 
 void test_reference_aos(
-    dim3 blocks,
-    dim3 threads,
-    int n,
-    float fac,
-    float eps_sqr,
-    float eps_sqr_2,
-    int num_runs)
+        dim3 blocks,
+        dim3 threads,
+        int n,
+        float fac,
+        float eps_sqr,
+        float eps_sqr_2,
+        int num_runs)
 {
-    float *arr, *out;
+    float * arr;
+    float * out;
     cudaMalloc(&arr, 3 * n * sizeof(float));
     REGSTOKES_CUDA_CHECK_LAST_ERROR();
     cudaMalloc(&out, 9 * n * n * sizeof(float));
@@ -78,13 +82,13 @@ void test_reference_aos(
 
     for (auto i = 0; i < num_runs; i++) {
         reference::aos::kernel<<<blocks, threads>>>(
-            arr,
-            arr,
-            out,
-            3 * n * sizeof(float),
-            fac,
-            eps_sqr,
-            eps_sqr_2);
+                arr,
+                arr,
+                out,
+                3 * n * sizeof(float),
+                fac,
+                eps_sqr,
+                eps_sqr_2);
         cudaDeviceSynchronize();
         REGSTOKES_CUDA_CHECK_LAST_ERROR();
     }
@@ -99,17 +103,15 @@ void test_reference_aos(
 }
 
 template<unsigned tile_dim, unsigned block_h, bool specialize>
-void test_soa(
-    int n,
-    float fac,
-    float eps_sqr,
-    float eps_sqr_2,
-    int num_runs)
+void test_soa(int n, float fac, float eps_sqr, float eps_sqr_2, int num_runs)
 {
     dim3 blocks(n / tile_dim, n / tile_dim);
     dim3 threads(tile_dim, block_h);
 
-    float *x, *y, *z, *out;
+    float * x;
+    float * y;
+    float * z;
+    float * out;
     cudaMalloc(&x, n * sizeof(float));
     REGSTOKES_CUDA_CHECK_LAST_ERROR();
     cudaMalloc(&y, n * sizeof(float));
@@ -124,17 +126,17 @@ void test_soa(
 
     for (auto i = 0; i < num_runs; i++) {
         soa::kernel<tile_dim, block_h><<<blocks, threads>>>(
-            x,
-            y,
-            z,
-            x,
-            y,
-            z,
-            out,
-            3 * n * sizeof(float),
-            fac,
-            eps_sqr,
-            eps_sqr_2);
+                x,
+                y,
+                z,
+                x,
+                y,
+                z,
+                out,
+                3 * n * sizeof(float),
+                fac,
+                eps_sqr,
+                eps_sqr_2);
         cudaDeviceSynchronize();
         REGSTOKES_CUDA_CHECK_LAST_ERROR();
     }
@@ -159,7 +161,7 @@ int main()
     cudaProfilerStop();
     REGSTOKES_CUDA_CHECK_LAST_ERROR();
 
-    constexpr unsigned n = 1 << 11;
+    constexpr unsigned n = 1 << 12;
 
     constexpr auto fac = 0.1;
     constexpr auto eps_sqr = 0.001;

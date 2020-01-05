@@ -7,23 +7,23 @@ namespace regstokes {
 /// The numerical core of the method of regularized Stokeslets.
 __device__
 void core(
-    float sx,
-    float sy,
-    float sz,
-    float fx,
-    float fy,
-    float fz,
-    float * out,
-    size_t pitch,
-    float fac,
-    float eps_sqr,
-    float eps_sqr_2,
-    float & xx,
-    float & xy,
-    float & xz,
-    float & yy,
-    float & yz,
-    float & zz)
+        float sx,
+        float sy,
+        float sz,
+        float fx,
+        float fy,
+        float fz,
+        float * out,
+        size_t pitch,
+        float fac,
+        float eps_sqr,
+        float eps_sqr_2,
+        float & xx,
+        float & xy,
+        float & xz,
+        float & yy,
+        float & yz,
+        float & zz)
 {
     auto dx = sx - fx;
     auto dy = sy - fy;

@@ -92,7 +92,7 @@ constexpr
 T saturating_div(T x, T y)
 {
     return static_cast<T>(constexpr_ceil(
-        static_cast<double>(x) / static_cast<double>(y)));
+            static_cast<double>(x) / static_cast<double>(y)));
 }
 
 } // namespace regstokes

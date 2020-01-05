@@ -11,13 +11,13 @@ namespace aos {
 ///
 __global__
 void kernel(
-    float const * src,
-    float const * fld,
-    float * out,
-    size_t pitch,
-    float fac,
-    float eps_sqr,
-    float eps_sqr_2)
+        float const * src,
+        float const * fld,
+        float * out,
+        size_t pitch,
+        float fac,
+        float eps_sqr,
+        float eps_sqr_2)
 {
     auto i = 3 * (blockIdx.y + threadIdx.y);
     auto j = 3 * (blockIdx.x + threadIdx.x);
@@ -30,20 +30,20 @@ void kernel(
     auto fy = fld[j + 1];
     auto fz = fld[j + 2];
 
-    regstokes::reference::detail::common(
-        i,
-        j,
-        sx,
-        sy,
-        sz,
-        fx,
-        fy,
-        fz,
-        out,
-        pitch,
-        fac,
-        eps_sqr,
-        eps_sqr_2);
+    detail::common(
+            i,
+            j,
+            sx,
+            sy,
+            sz,
+            fx,
+            fy,
+            fz,
+            out,
+            pitch,
+            fac,
+            eps_sqr,
+            eps_sqr_2);
 }
 
 } // namespace aos
