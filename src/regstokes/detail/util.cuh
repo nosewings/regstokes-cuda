@@ -3,6 +3,8 @@
 #include <iostream>
 
 namespace regstokes {
+namespace detail {
+namespace util {
 
 ///////////////////////////////////////////////////////////////////////////////
 // Declarations
@@ -95,9 +97,11 @@ T saturating_div(T x, T y)
             static_cast<double>(x) / static_cast<double>(y)));
 }
 
+} // namespace util
+} // namespace detail
 } // namespace regstokes
 
-#define REGSTOKES_CUDA_CHECK_ERROR(err) \
-    cuda_check_error_with((err), __FILE__, __LINE__)
-#define REGSTOKES_CUDA_CHECK_LAST_ERROR() \
-    REGSTOKES_CUDA_CHECK_ERROR(cudaGetLastError())
+#define REGSTOKES_DETAIL_UTIL_CUDA_CHECK_ERROR(err) \
+    regstokes::detail::util::cuda_check_error_with((err), __FILE__, __LINE__)
+#define REGSTOKES_DETAIL_UTIL_CUDA_CHECK_LAST_ERROR() \
+    REGSTOKES_DETAIL_UTIL_CUDA_CHECK_ERROR(cudaGetLastError())

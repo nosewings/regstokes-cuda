@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../util.cuh"
+#include "regstokes/detail/util.cuh"
 
 namespace regstokes {
 namespace soa {
@@ -21,7 +21,7 @@ struct read {
     {
         auto thread_idx = threadIdx.y * tile_dim + threadIdx.x;
         constexpr auto block_size = block_h * tile_dim;
-        constexpr auto num_iters = regstokes::saturating_div(
+        constexpr auto num_iters = regstokes::detail::util::saturating_div(
                 3 * tile_dim,
                 block_size);
 #pragma unroll

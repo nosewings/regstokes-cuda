@@ -1,5 +1,8 @@
 #pragma once
 
+#include <math_constants.h>
+
+#include "regstokes/detail.cuh"
 #include "regstokes/soa/detail.cuh"
 
 namespace regstokes {
@@ -13,12 +16,12 @@ template<unsigned tile_dim, unsigned block_h, unsigned warp_size = 32,
         bool specialize = true>
 __global__
 void kernel(
-        float const * src_x,
-        float const * src_y,
-        float const * src_z,
         float const * fld_x,
         float const * fld_y,
         float const * fld_z,
+        float const * src_x,
+        float const * src_y,
+        float const * src_z,
         float * out,
         size_t pitch,
         float fac,
@@ -31,23 +34,23 @@ void kernel(
             tile_dim % block_h == 0,
             "tile dimension must be a multiple of block height"
     );
-    static_assert(block_size > 0, "block size must be nonzero");
+    static_assert(block_size > 0, "block size must be positive");
     static_assert(
             block_size % warp_size == 0,
             "block size must be a multiple of the warp size"
     );
 
-    cuda_assume(blockDim.x == tile_dim);
-    cuda_assume(blockDim.y == block_h);
-    cuda_assume(threadIdx.x < tile_dim);
-    cuda_assume(threadIdx.y < block_h);
+    regstokes::detail::util::cuda_assume(blockDim.x == tile_dim);
+    regstokes::detail::util::cuda_assume(blockDim.y == block_h);
+    regstokes::detail::util::cuda_assume(threadIdx.x < tile_dim);
+    regstokes::detail::util::cuda_assume(threadIdx.y < block_h);
 
     __shared__ float fld_x_tile[tile_dim];
     __shared__ float fld_y_tile[tile_dim];
     __shared__ float fld_z_tile[tile_dim];
     __shared__ float out_tile[3 * block_h][3 * tile_dim];
 
-    regstokes::soa::detail::read<tile_dim, block_h, warp_size, specialize>::_(
+    detail::read<tile_dim, block_h, warp_size, specialize>::_(
             fld_x,
             fld_y,
             fld_z,
@@ -70,13 +73,13 @@ void kernel(
         auto fy = fld_y_tile[t * block_h + threadIdx.y];
         auto fz = fld_z_tile[t * block_h + threadIdx.y];
         float xx, xy, xz, yy, yz, zz;
-        regstokes::core(
-                sx,
-                sy,
-                sz,
+        regstokes::detail::core(
                 fx,
                 fy,
                 fz,
+                sx,
+                sy,
+                sz,
                 out,
                 pitch,
                 fac,
@@ -110,7 +113,11 @@ void kernel(
             for (auto i = 0; i < 3; i++) {
                 auto in_col = i * tile_dim + threadIdx.x;
                 auto out_col = 3 * tile_dim * blockIdx.x + in_row;
-                auto out_ptr = pitched(out, pitch, out_row, out_col);
+                auto out_ptr = regstokes::detail::util::pitched(
+                        out,
+                        pitch,
+                        out_row,
+                        out_col);
                 *out_ptr = out_tile[in_row][in_col];
             }
         }

@@ -1,7 +1,6 @@
 #pragma once
 
-#include "../core.cuh"
-#include "../util.cuh"
+#include "regstokes/detail.cuh"
 
 namespace regstokes {
 namespace reference {
@@ -14,12 +13,12 @@ __device__
 void common(
         unsigned i,
         unsigned j,
-        float sx,
-        float sy,
-        float sz,
         float fx,
         float fy,
         float fz,
+        float sx,
+        float sy,
+        float sz,
         float * out,
         size_t pitch,
         float fac,
@@ -27,13 +26,13 @@ void common(
         float eps_sqr_2)
 {
     float xx, xy, xz, yy, yz, zz;
-    regstokes::core(
-            sx,
-            sy,
-            sz,
+    regstokes::detail::core(
             fx,
             fy,
             fz,
+            sx,
+            sy,
+            sz,
             out,
             pitch,
             fac,
@@ -46,9 +45,9 @@ void common(
             yz,
             zz);
 
-    auto out0 = pitched(out, pitch, i, j);
-    auto out1 = pitched(out0, pitch, 1, 0);
-    auto out2 = pitched(out1, pitch, 1, 0);
+    auto out0 = regstokes::detail::util::pitched(out, pitch, i + 0, j);
+    auto out1 = regstokes::detail::util::pitched(out, pitch, i + 1, j);
+    auto out2 = regstokes::detail::util::pitched(out, pitch, i + 2, j);
 
     out0[0] = xx;
     out0[1] = xy;
